@@ -48,7 +48,7 @@ function Create({ edit }) {
     const answer = window.confirm("Are you sure?");
     if (answer) {
       deleteNote(id, noteId);
-      noteId = undefined; // set noteId to undefined after deleting the note
+      noteId = undefined; 
     }
   };
 
