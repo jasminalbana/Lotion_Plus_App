@@ -8,35 +8,27 @@ terraform {
 }
 
 
-
-# specify the provider region
 provider "aws" {
   region = "ca-central-1"
 }
 
-
-
-# resource "aws_dynamodb_table" "lotion3456798" {
-#   name         = "lotion3456798"
-#   billing_mode = "PROVISIONED"
 
 resource "aws_dynamodb_table" "jasmin061518" {
   name         = "jasmin061518"
   billing_mode = "PROVISIONED"
 
 
-  # up to 8KB read per second (eventually consistent)
+ 
   read_capacity = 1
 
-  # up to 1KB per second
+
   write_capacity = 1
 
-  # we only need a student id to find an item in the table; therefore, we 
-  # don't need a sort key here
+ 
   hash_key  = "email"
   range_key = "id"
 
-  # the hash_key data type is string
+
   attribute {
     name = "email"
     type = "S"
@@ -49,23 +41,6 @@ resource "aws_dynamodb_table" "jasmin061518" {
 }
 
 
-
-# # local names for all three functions
-# locals {
-#   save_note_function   = "save-note-30141542"
-#   get_notes_function   = "get-notes-30141542"
-#   delete_note_function = "delete-note-30141542"
-#   save_note_handler    = "main.save_note_handler"
-#   get_notes_handler    = "main.get_notes_handler"
-#   delete_note_handler  = "main.delete_note_handler"
-#   save_note_artifact   = "../functions/save-note/artifact.zip"
-#   get_notes_artifact   = "../functions/get-notes/artifact.zip"
-#   delete_note_artifact = "../functions/delete-note/artifact.zip"
-# }
-
-
-
-# local names for all three functions
 locals {
   save_note_function   = "savenote061518"
   get_notes_function   = "getnotes061518"
@@ -80,7 +55,7 @@ locals {
 
 
 
-#Create an IAM role for all three functions
+
 resource "aws_iam_role" "IAM-role-all" {
   name               = "IAM-role-lambda"
   assume_role_policy = <<EOF
@@ -101,8 +76,6 @@ EOF
 }
 
 
-
-#Creating a policy for all three lambda functions
 resource "aws_iam_policy" "logs_all" {
   name        = "lambda-log"
   description = "IAM policy for logging from a lambda"
@@ -128,17 +101,12 @@ resource "aws_iam_policy" "logs_all" {
 EOF
 }
 
-
-
-#Attaching above policies to the function roles
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role       = aws_iam_role.IAM-role-all.name
   policy_arn = aws_iam_policy.logs_all.arn
 }
 
 
-
-#Creating the 3 archive files from the 3 main.py files
 data "archive_file" "archive_save_note" {
   type        = "zip"
   source_file = "../functions/save-note/main.py"
@@ -158,8 +126,6 @@ data "archive_file" "archive_delete_note" {
 }
 
 
-
-#Creating the 3 lambda functions
 resource "aws_lambda_function" "lambda-function-save-note" {
   role             = aws_iam_role.IAM-role-all.arn
   function_name    = local.save_note_function
@@ -189,7 +155,7 @@ resource "aws_lambda_function" "lambda-function-delete-note" {
 
 
 
-#Creating the 3 lambda function URLs
+
 resource "aws_lambda_function_url" "save_note_url" {
   function_name      = aws_lambda_function.lambda-function-save-note.function_name
   authorization_type = "NONE"
@@ -230,7 +196,7 @@ resource "aws_lambda_function_url" "delete_note_url" {
 
 
 
-#Showing all 3 lambda function URLs after creation
+
 output "lambda_url_save_note" {
   value = aws_lambda_function_url.save_note_url.function_url
 }
@@ -244,10 +210,7 @@ output "lambda_url_delete_note" {
 }
 
 
-# Function URLs
-# lambda_url_delete_note = "https://vc2mylkg6qpxfd3hf5v6kipzay0xorcr.lambda-url.ca-central-1.on.aws/"
-# lambda_url_get_notes = "https://olhgcz7jxoz4k4fiuiqz3jh4ia0mifov.lambda-url.ca-central-1.on.aws/"
-# lambda_url_save_note = "https://sgmckt35czqg6a6emcluish3h40vdxyt.lambda-url.ca-central-1.on.aws/"
+
 
 
 

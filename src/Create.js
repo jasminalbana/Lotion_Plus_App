@@ -9,8 +9,9 @@ import "react-quill/dist/quill.snow.css";
 function Create({ edit }) {
     
   let { noteId } = useParams();
-  noteId = noteId ? parseInt(noteId) - 1 : undefined; // parse noteId to int and subtract 1
+  noteId = noteId ? parseInt(noteId) - 1 : undefined; 
   const [notes, updateNote, deleteNote] = useOutletContext();
+  // eslint-disable-next-line
   let currentNote = { title: "", body: "", when: "" };
   if (noteId !== undefined && notes.length > noteId) {
     currentNote = notes[noteId];
