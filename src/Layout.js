@@ -19,7 +19,7 @@ function Layout({ logOut, profile, user }) {
     setNotes([]);
     
   }, []);
-
+ 
   useEffect(() => {
     if (currentNote < 0) {
       return;
@@ -29,6 +29,7 @@ function Layout({ logOut, profile, user }) {
       return;
     }
     navigate(`/notes/${currentNote + 1}/edit`);
+    // eslint-disable-next-line
   }, [notes]);
 
   const saveNote = async (note, index) => {
@@ -114,7 +115,9 @@ function Layout({ logOut, profile, user }) {
 
   useEffect(() => {
     localStorage.setItem("username", JSON.stringify(user));
+    // eslint-disable-next-line
     localStorage.setItem("userProfile", JSON.stringify(profile));
+    // eslint-disable-next-line
   }, [user]);
 
   return (
