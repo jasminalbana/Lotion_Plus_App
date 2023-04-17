@@ -21,9 +21,7 @@ function Layout({ logOut, profile, user }) {
   }, []);
  
   useEffect(() => {
-    if (currentNote < 0) {
-      return;
-    }
+    if (currentNote < 0) {return;}
     if (!editMode) {
       navigate(`/notes/${currentNote + 1}`);
       return;
@@ -34,11 +32,7 @@ function Layout({ logOut, profile, user }) {
 
   const saveNote = async (note, index) => {
     note.body = note.body.replaceAll("<p><br></p>", "");
-    setNotes([
-      ...notes.slice(0, index),
-      { ...note },
-      ...notes.slice(index + 1),
-    ]);
+    setNotes([...notes.slice(0, index),{ ...note },...notes.slice(index + 1),]);
     setCurrentNote(index);
     setEditMode(false);
 
@@ -47,12 +41,9 @@ function Layout({ logOut, profile, user }) {
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          email: profile.email,
-        },
+          "Content-Type": "application/json",email: profile.email},
         body: JSON.stringify({ ...note, email: profile.email }),
-      }
-    );
+      });
   }
 
   useEffect(() => {
