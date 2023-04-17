@@ -7,3 +7,4 @@ const currentDate = () => {
 
 export { currentDate };
 
+// export const currentDate = () => new Date().toISOString().slice(0, 19).replace("T", " ");
