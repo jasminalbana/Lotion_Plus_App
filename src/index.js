@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import "./index.css";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import Create from "./Create";
@@ -12,7 +12,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <>
     <GoogleOAuthProvider clientId="690970820198-mf2rrravnj97i2da14veehqmdhiud5mf.apps.googleusercontent.com">
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           <Route element={<App />}>
             <Route path="/" element={<Empty />} />
@@ -26,7 +26,7 @@ root.render(
             <Route path="*" element={<Empty />} />
           </Route>
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </GoogleOAuthProvider>
   </>
 );
