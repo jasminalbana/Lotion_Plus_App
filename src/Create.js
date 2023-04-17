@@ -7,61 +7,42 @@ import FormattedDate from "./FormattedDate";
 import "react-quill/dist/quill.snow.css";
 
 function Create({ edit }) {
-    
-  let { noteId } = useParams();
-  noteId = noteId ? parseInt(noteId) - 1 : undefined; 
+  const { noteId } = useParams();
   const [notes, updateNote, deleteNote] = useOutletContext();
-  // eslint-disable-next-line
-  let currentNote = { title: "", body: "", when: "" };
-  if (noteId !== undefined && notes.length > noteId) {
-    currentNote = notes[noteId];
-  }
   const [noteBody, setNoteBody] = useState("");
   const [noteTitle, setNoteTitle] = useState("");
-  const [noteWhen, setNoteWhen] = useState();
-  const [id, setId] = useState("");
+  const [noteWhen, setNoteWhen] = useState(currentDate());
+  const [id, setId] = useState(null);
 
   useEffect(() => {
-    setNoteBody(currentNote.body);
-    setNoteTitle(currentNote.title);
-    if (currentNote.when) {
-      setNoteWhen(currentNote.when);
-    } else {
-      setNoteWhen(currentDate());
+    const currentNote = noteId ? notes[parseInt(noteId) - 1] : null;
+    if (currentNote) {
+      setNoteBody(currentNote.body);
+      setNoteTitle(currentNote.title);
+      setNoteWhen(currentNote.when || currentDate());
+      setId(currentNote.id);
     }
-    setId(currentNote.id);
-  }, [currentNote]);
+  }, [noteId, notes]);
 
   const save = () => {
-    updateNote(
-      {
-        body: noteBody,
-        title: noteTitle,
-        when: noteWhen,
-        id: id,
-      },
-      noteId
-    );
+    updateNote({ body: noteBody, title: noteTitle, when: noteWhen, id }, noteId);
   };
 
   const tryDelete = () => {
-    const answer = window.confirm("Are you sure?");
-    if (answer) {
+    if (window.confirm("Are you sure?")) {
       deleteNote(id, noteId);
-      noteId = undefined; 
     }
   };
 
-  return id ? (
+  if (!id) {
+    return <Empty />;
+  }
+
+  return (
     <>
       <header>
         <div id="note-info">
-          {!edit ? (
-            <>
-              <h2 className="note-title">{noteTitle}</h2>
-              <FormattedDate date={noteWhen} />
-            </>
-          ) : (
+          {edit ? (
             <>
               <input
                 className="note-title"
@@ -71,61 +52,59 @@ function Create({ edit }) {
               />
               <input
                 type="datetime-local"
-                value={noteWhen ? noteWhen : currentDate()}
+                value={noteWhen}
                 onChange={(event) => setNoteWhen(event.target.value)}
               />
+            </>
+          ) : (
+            <>
+              <h2 className="note-title">{noteTitle}</h2>
+              <FormattedDate date={noteWhen} />
             </>
           )}
         </div>
         <div id="note-controls">
-          {!edit ? (
-            <>
-              <Link
-                className="button"
-                id="edit-button"
-                to={`/notes/${noteId + 1}/edit`}
-              >
-                Edit
-              </Link>
-              <Link
-                className="button"
-                id="delete-button"
-                to=""
-                onClick={tryDelete}
-              >
-                Delete
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link className="button" id="save-button" to="" onClick={save}>
-                Save
-              </Link>
-              <Link
-                className="button"
-                id="delete-button"
-                to=""
-                onClick={tryDelete}
-              >
-                Delete
-              </Link>
-            </>
-          )}
+          <Link
+            className="button"
+            id="edit-button"
+            to={`/notes/${noteId}/edit`}
+            hidden={edit}
+          >
+            Edit
+          </Link>
+          <Link
+            className="button"
+            id="save-button"
+            to=""
+            onClick={save}
+            hidden={!edit}
+          >
+            Save
+          </Link>
+          <Link
+            className="button"
+            id="delete-button"
+            to=""
+            onClick={tryDelete}
+          >
+            Delete
+          </Link>
         </div>
       </header>
-      {!edit ? (
-        <div id="note-content" dangerouslySetInnerHTML={{ __html: noteBody }} />
-      ) : (
+      {edit ? (
         <ReactQuill
           placeholder="Your Note Here"
           theme="snow"
           value={noteBody}
           onChange={setNoteBody}
         />
+      ) : (
+        <div
+          id="note-content"
+          dangerouslySetInnerHTML={{ __html: noteBody }}
+        />
       )}
     </>
-  ) : (
-    <Empty />
   );
 }
 
